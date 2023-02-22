@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-import axios from "axios";
+import { axiosWithAuth } from "../utils/axiosWithAuth";
 import "./PaymentsModal.css";
 
 const customStyles = {
@@ -36,8 +36,8 @@ const PaymentsModal = ({ modalState, setModalState }) => {
       payment_request: formData.invoiceToPay,
     };
 
-    axios
-      .post(`${backendUrl}/lightning/pay`, data)
+    axiosWithAuth()
+      .post("/lightning/pay", data)
       .then((res) =>
         setPaymentInfo({
           paymentHash: res.data.payment_hash,
@@ -55,8 +55,8 @@ const PaymentsModal = ({ modalState, setModalState }) => {
       value: formData.amount,
       memo: "LNBits",
     };
-    axios
-      .post(`${backendUrl}/lightning/invoice`, data)
+    axiosWithAuth()
+      .post("/lightning/invoice", data)
       .then((res) => setInvoice(res.data.payment_request))
       .catch((err) => console.log(err));
 

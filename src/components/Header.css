@@ -1,0 +1,44 @@
+header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  border-bottom: 2px solid #ffbf46;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 auto;
+}
+
+.user {
+  position: absolute;
+  right: 25;
+  left: 75%;
+  font-family: monospace;
+  font-weight: bold;
+  color: ghostwhite;
+}
+
+.auth-button {
+  position: absolute;
+  right: 10;
+  left: 90%;
+  background-color: #ffbf46;
+  border: 2px solid #8a4fff;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 1.2rem;
+  font-family: monospace;
+  font-weight: bold;
+  width: 100px;
+}
+
+button:hover {
+  cursor: pointer;
+  opacity: 0.6;
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Transactions from "./components/Transactions";
 import Buttons from "./components/Buttons";
 import Chart from "./components/Chart";
+import Header from "./components/Header";
 import axios from "axios";
 import "./App.css";
 
@@ -111,16 +112,12 @@ function App() {
 
   return (
     <div className="App">
-      <header>
-        <h1>pleb wallet</h1>
-      </header>
+      <Header />
       <Buttons />
       <div className="row">
         <div className="balance-card">
           <h2>Balance</h2>
           <p>{balance} sats</p>
-          <h2>Channel Balance</h2>
-          <p>{channelBalance} sats</p>
         </div>
         <div className="balance-card">
           <h2>Price</h2>
