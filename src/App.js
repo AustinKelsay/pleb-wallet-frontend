@@ -4,16 +4,34 @@ import Buttons from "./components/Buttons";
 import Chart from "./components/Chart";
 import Header from "./components/Header";
 import axios from "axios";
+import { axiosWithAuth } from "./utils/axiosWithAuth";
 import "./App.css";
 
 function App() {
   const [price, setPrice] = useState(null);
   const [balance, setBalance] = useState(null);
   const [channelBalance, setChannelBalance] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
   const [transactions, setTransactions] = useState([]);
   const [chartData, setChartData] = useState(null);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      axiosWithAuth()
+        .get("/users/user")
+        .then((res) => {
+          setIsLoggedIn(true);
+          setUsername(res.data.username);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
 
   const getPrice = () => {
     // Axios is a library that makes it easy to make http requests
@@ -104,16 +122,23 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       getPrice();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Run these functions every 30 seconds after initial page load
+  useEffect(() => {
+    const interval = setInterval(() => {
       getWalletBalance();
       getTransactions();
-    }, 5000);
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="App">
       <Header />
-      <Buttons />
+      <Buttons isLoggedIn={isLoggedIn} />
       <div className="row">
         <div className="balance-card">
           <h2>Balance</h2>

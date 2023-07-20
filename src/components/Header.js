@@ -4,6 +4,8 @@ import axios from "axios";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 import "./Header.css";
 
+Modal.setAppElement("#root");
+
 const customStyles = {
   content: {
     top: "50%",
@@ -31,7 +33,7 @@ const Header = () => {
     if (token) {
       console.log("in here");
       axiosWithAuth()
-        .get("/user/me")
+        .get("/users/user")
         .then((res) => {
           console.log("user", res);
           setIsLoggedIn(true);
@@ -47,7 +49,7 @@ const Header = () => {
     event.preventDefault();
 
     axios
-      .post(`${backendUrl}/user/login`, formData)
+      .post(`${backendUrl}/users/login`, formData)
       .then((res) => {
         console.log(res);
         localStorage.setItem("token", res.data.token);
@@ -71,22 +73,22 @@ const Header = () => {
   };
 
   return (
-    <header>
+    <header className="header-container">
+      <div></div> {/* Empty div for flex alignment */}
       <h1>pleb wallet</h1>
-      {isLoggedIn ? (
-        <p className="user">Welcome, {username}!</p>
-      ) : (
-        <button className="auth-button" onClick={() => setModalIsOpen(true)}>
-          Login
-        </button>
-      )}
+      <div className="auth-container">
+        {isLoggedIn ? <p className="user">Welcome, {username}!</p> : null}
 
-      {isLoggedIn && (
-        <button className="auth-button" onClick={handleLogout}>
-          Logout
-        </button>
-      )}
-
+        {isLoggedIn ? (
+          <button className="auth-button" onClick={handleLogout}>
+            Logout
+          </button>
+        ) : (
+          <button className="auth-button" onClick={() => setModalIsOpen(true)}>
+            Login
+          </button>
+        )}
+      </div>
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
