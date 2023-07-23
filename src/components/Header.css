@@ -25,6 +25,7 @@ h1 {
   font-family: monospace;
   font-weight: bold;
   color: ghostwhite;
+  width: auto;
 }
 
 .auth-button {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 import "./PaymentsModal.css";
@@ -25,8 +25,26 @@ const PaymentsModal = ({ modalState, setModalState }) => {
     paymentHash: "",
     checkingId: "",
   });
+  // Our state for the user object we get back from the backend
+  const [user, setUser] = useState({});
+  // error state
+  const [error, setError] = useState(null);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      axiosWithAuth()
+        .get(`${backendUrl}/users/user`)
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
 
   const handleSend = (e) => {
     // Keep the page from refreshing when the form is submitted
@@ -34,17 +52,20 @@ const PaymentsModal = ({ modalState, setModalState }) => {
 
     const data = {
       payment_request: formData.invoiceToPay,
+      user_id: user.id,
     };
 
     axiosWithAuth()
-      .post("/lightning/pay", data)
-      .then((res) =>
+      .post(`${backendUrl}/lightning/pay`, data)
+      .then((res) => {
         setPaymentInfo({
           paymentHash: res.data.payment_hash,
           checkingId: res.data.checking_id,
-        })
-      )
-      .catch((err) => console.log(err));
+        });
+        // Reload the page to update the balance if the payment was successful
+        window.location.reload();
+      })
+      .catch((err) => setError(err.message));
   };
 
   const handleReceive = (e) => {
@@ -53,12 +74,13 @@ const PaymentsModal = ({ modalState, setModalState }) => {
 
     const data = {
       value: formData.amount,
-      memo: "LNBits",
+      memo: "pleb-wallet-be",
+      user_id: user.id,
     };
     axiosWithAuth()
-      .post("/lightning/invoice", data)
+      .post(`${backendUrl}/lightning/invoice`, data)
       .then((res) => setInvoice(res.data.payment_request))
-      .catch((err) => console.log(err));
+      .catch((err) => setError(err.message));
 
     return;
   };
@@ -142,6 +164,12 @@ const PaymentsModal = ({ modalState, setModalState }) => {
           <h3>Payment sent</h3>
           <p>Payment hash: {paymentInfo.paymentHash}</p>
           <p>Checking id: {paymentInfo.checkingId}</p>
+        </section>
+      )}
+      {error && (
+        <section>
+          <h3>Error</h3>
+          <p>{error}</p>
         </section>
       )}
     </Modal>

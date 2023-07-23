@@ -18,7 +18,9 @@ const customStyles = {
 };
 
 const Header = () => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
+  const [signupModalIsOpen, setSignupModalIsOpen] = useState(false);
+  const [userCreated, setUserCreated] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -31,11 +33,9 @@ const Header = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      console.log("in here");
       axiosWithAuth()
         .get("/users/user")
         .then((res) => {
-          console.log("user", res);
           setIsLoggedIn(true);
           setUsername(res.data.username);
         })
@@ -51,15 +51,36 @@ const Header = () => {
     axios
       .post(`${backendUrl}/users/login`, formData)
       .then((res) => {
-        console.log(res);
         localStorage.setItem("token", res.data.token);
-        setModalIsOpen(false);
+        setLoginModalIsOpen(false);
+        setUserCreated(false);
         setFormData({
           username: "",
           password: "",
         });
-        setIsLoggedIn(true);
-        setUsername(res.data.username);
+
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleSignup = (event) => {
+    event.preventDefault();
+
+    axios
+      .post(`${backendUrl}/users/register`, formData)
+      .then((res) => {
+        if (res.status === 201) {
+          setUserCreated(true);
+          setSignupModalIsOpen(false);
+          setLoginModalIsOpen(true);
+          setFormData({
+            username: "",
+            password: "",
+          });
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -84,18 +105,32 @@ const Header = () => {
             Logout
           </button>
         ) : (
-          <button className="auth-button" onClick={() => setModalIsOpen(true)}>
-            Login
-          </button>
+          <>
+            <button
+              className="auth-button"
+              onClick={() => setLoginModalIsOpen(true)}
+            >
+              Login
+            </button>
+            <button
+              className="auth-button"
+              onClick={() => setSignupModalIsOpen(true)}
+            >
+              Signup
+            </button>
+          </>
         )}
       </div>
       <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
+        isOpen={loginModalIsOpen}
+        onRequestClose={() => setLoginModalIsOpen(false)}
         style={customStyles}
         contentLabel="Login Modal"
       >
         <h2>Login</h2>
+        {userCreated && (
+          <p>Your user was successfully created. You can now login.</p>
+        )}
         <form onSubmit={handleLogin}>
           <label>
             Username:
@@ -118,6 +153,37 @@ const Header = () => {
             />
           </label>
           <button type="submit">Login</button>
+        </form>
+      </Modal>
+      <Modal
+        isOpen={signupModalIsOpen}
+        onRequestClose={() => setSignupModalIsOpen(false)}
+        style={customStyles}
+        contentLabel="Signup Modal"
+      >
+        <h2>Signup</h2>
+        <form onSubmit={handleSignup}>
+          <label>
+            Username:
+            <input
+              type="text"
+              value={formData.username}
+              onChange={(e) =>
+                setFormData({ ...formData, username: e.target.value })
+              }
+            />
+          </label>
+          <label>
+            Password:
+            <input
+              type="password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+            />
+          </label>
+          <button type="submit">Signup</button>
         </form>
       </Modal>
     </header>

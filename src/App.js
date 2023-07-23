@@ -22,7 +22,7 @@ function App() {
     const token = localStorage.getItem("token");
     if (token) {
       axiosWithAuth()
-        .get("/users/user")
+        .get(`${backendUrl}/users/user`)
         .then((res) => {
           setIsLoggedIn(true);
           setUsername(res.data.username);
@@ -42,7 +42,8 @@ function App() {
       // .then is a promise that will run when the API call is successful
       .then((res) => {
         console.log(res.data.data.amount);
-        setPrice(res.data.data.amount);
+        // set price to only 2 decimal places
+        setPrice(Number(res.data.data.amount).toFixed(2));
         updateChartData(res.data.data.amount);
       })
       // .catch is a promise that will run if the API call fails
@@ -141,8 +142,8 @@ function App() {
       <Buttons isLoggedIn={isLoggedIn} />
       <div className="row">
         <div className="balance-card">
-          <h2>Balance</h2>
-          <p>{balance} sats</p>
+          <p>Onchain balance: {balance} sats</p>
+          <p>Channel balance: {channelBalance} sats</p>
         </div>
         <div className="balance-card">
           <h2>Price</h2>
