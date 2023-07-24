@@ -10,22 +10,24 @@ import "./App.css";
 function App() {
   const [price, setPrice] = useState(null);
   const [balance, setBalance] = useState(null);
+  const [user, setUser] = useState(null);
   const [channelBalance, setChannelBalance] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
   const [transactions, setTransactions] = useState([]);
   const [chartData, setChartData] = useState(null);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
+    // Check if user is logged in
     const token = localStorage.getItem("token");
+    // If user is logged in, get user info
     if (token) {
       axiosWithAuth()
         .get(`${backendUrl}/users/user`)
         .then((res) => {
           setIsLoggedIn(true);
-          setUsername(res.data.username);
+          setUser(res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -138,7 +140,7 @@ function App() {
 
   return (
     <div className="App">
-      <Header />
+      <Header isLoggedIn={isLoggedIn} user={user} />
       <Buttons isLoggedIn={isLoggedIn} />
       <div className="row">
         <div className="balance-card">
@@ -146,7 +148,7 @@ function App() {
           <p>Channel balance: {channelBalance} sats</p>
         </div>
         <div className="balance-card">
-          <h2>Price</h2>
+          <p>Price</p>
           <p>${price}</p>
         </div>
       </div>

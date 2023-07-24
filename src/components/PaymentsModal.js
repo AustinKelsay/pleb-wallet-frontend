@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
+import { QRCodeSVG } from "qrcode.react";
 import "./PaymentsModal.css";
 
 const customStyles = {
   content: {
-    top: "20%",
+    top: "10%",
     left: "40%",
     right: "40%",
     bottom: "auto",
@@ -155,7 +156,7 @@ const PaymentsModal = ({ modalState, setModalState }) => {
         <section>
           <h3>Invoice created</h3>
           <p>{invoice}</p>
-          {/* ToDo: Create a QR code out of this invoice as well */}
+          <QRCodeSVG size={256} width={"100%"} value={invoice} />
         </section>
       )}
       {/* If we are displaying the status of our successful payment */}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import axios from "axios";
-import { axiosWithAuth } from "../utils/axiosWithAuth";
 import "./Header.css";
 
 Modal.setAppElement("#root");
@@ -17,7 +16,7 @@ const customStyles = {
   },
 };
 
-const Header = () => {
+const Header = ({ isLoggedIn, user }) => {
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
   const [signupModalIsOpen, setSignupModalIsOpen] = useState(false);
   const [userCreated, setUserCreated] = useState(false);
@@ -25,25 +24,8 @@ const Header = () => {
     username: "",
     password: "",
   });
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axiosWithAuth()
-        .get("/users/user")
-        .then((res) => {
-          setIsLoggedIn(true);
-          setUsername(res.data.username);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, []);
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -89,8 +71,6 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setUsername("");
   };
 
   return (
@@ -98,7 +78,7 @@ const Header = () => {
       <div></div> {/* Empty div for flex alignment */}
       <h1>pleb wallet</h1>
       <div className="auth-container">
-        {isLoggedIn ? <p className="user">Welcome, {username}!</p> : null}
+        {isLoggedIn ? <p className="user">Welcome, {user.username}!</p> : null}
 
         {isLoggedIn ? (
           <button className="auth-button" onClick={handleLogout}>
