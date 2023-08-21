@@ -71,6 +71,8 @@ const Header = ({ isLoggedIn, user }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+
+    window.location.reload();
   };
 
   return (

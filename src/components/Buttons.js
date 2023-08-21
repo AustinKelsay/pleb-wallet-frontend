@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PaymentsModal from "./PaymentsModal";
 import "./Buttons.css";
 
-export const Buttons = ({ isLoggedIn }) => {
+export const Buttons = ({ isLoggedIn, user }) => {
   const [modalState, setModalState] = useState({
     type: "",
     open: false,
@@ -31,7 +31,11 @@ export const Buttons = ({ isLoggedIn }) => {
           Login to create invoices or Login as an admin to pay invoices
         </p>
       )}
-      <PaymentsModal modalState={modalState} setModalState={setModalState} />
+      <PaymentsModal
+        modalState={modalState}
+        setModalState={setModalState}
+        user={user}
+      />
     </div>
   );
 };

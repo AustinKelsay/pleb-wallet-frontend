@@ -13,7 +13,7 @@ const customStyles = {
   },
 };
 
-const PaymentsModal = ({ modalState, setModalState }) => {
+const PaymentsModal = ({ modalState, setModalState, user }) => {
   // Our state for the info we will send to either generate a new invoice or pay an invoice
   const [formData, setFormData] = useState({
     amount: 0,
@@ -26,26 +26,10 @@ const PaymentsModal = ({ modalState, setModalState }) => {
     paymentHash: "",
     checkingId: "",
   });
-  // Our state for the user object we get back from the backend
-  const [user, setUser] = useState({});
   // error state
   const [error, setError] = useState(null);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axiosWithAuth()
-        .get(`${backendUrl}/users/user`)
-        .then((res) => {
-          setUser(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, []);
 
   const handleSend = (e) => {
     // Keep the page from refreshing when the form is submitted
@@ -107,7 +91,7 @@ const PaymentsModal = ({ modalState, setModalState }) => {
     <Modal
       isOpen={modalState.open}
       style={customStyles}
-      contentLabel="Example Modal"
+      contentLabel="Payments Modal"
       appElement={document.getElementById("root")}
     >
       <p

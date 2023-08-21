@@ -133,6 +133,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       getWalletBalance();
+      getChannelBalance();
       getTransactions();
     }, 30000);
     return () => clearInterval(interval);
@@ -141,7 +142,7 @@ function App() {
   return (
     <div className="App">
       <Header isLoggedIn={isLoggedIn} user={user} />
-      <Buttons isLoggedIn={isLoggedIn} />
+      <Buttons isLoggedIn={isLoggedIn} user={user} />
       <div className="row">
         <div className="balance-card">
           <p>Onchain balance: {balance} sats</p>
