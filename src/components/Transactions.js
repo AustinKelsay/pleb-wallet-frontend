@@ -3,6 +3,7 @@ import "./Transactions.css";
 
 // This component renders a list of transactions, each transaction is an object with multiple properties.
 const Transactions = ({ transactions }) => {
+  console.log(transactions)
   // This helper function takes a timestamp and formats it to a human-readable date-time string.
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
@@ -20,11 +21,11 @@ const Transactions = ({ transactions }) => {
   // Otherwise, it uses parts of the payment request to describe the transaction.
   const formatDescription = (tx) => {
     let description;
-    if (tx.settled === 0) {
+    if (tx.settled === false) {
       description = "Unpaid invoice";
     } else {
       description = `${
-        tx.send === 0 ? "Received from" : "Sent to"
+        tx.send === false ? "Received from" : "Sent to"
       } ${tx.payment_request.substring(0, 25)}...`;
     }
     return description;
